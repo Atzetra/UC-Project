@@ -16,8 +16,8 @@ class Builder(tfds.core.GeneratorBasedBuilder):
     }
     MANUAL_DOWNLOAD_INSTRUCTIONS = """
     Download the file from https://drive.google.com/file/d/1N1NahlAvH3W00dDMt4CJP7c4TCyhFUL_/view.
-    Extract the file and place the directory in the `manual_dir/` (../.data/20)
-    Run ../dataset_processing.py to get the synthetic data."""
+    Extract the file and place the directory in the `manual_dir/` (~/tensorflow_datasets/downloads/manual/)
+    Run ../dataset_processing.py on the image and mask files to get the synthetic data."""
 
     def _info(self) -> tfds.core.DatasetInfo:
         """Returns the dataset metadata."""
@@ -26,8 +26,12 @@ class Builder(tfds.core.GeneratorBasedBuilder):
             features=tfds.features.FeaturesDict(
                 {
                     # These are the features of your dataset like images, labels ...
-                    "image": tfds.features.Tensor(shape=(1024, 1024, 3)),
-                    "mask": tfds.features.Tensor(shape=(1024, 1024, 1)),
+                    "image": tfds.features.Tensor(
+                        shape=(1024, 1024, 4), dtype=tf.uint16
+                    ),
+                    "mask": tfds.features.Tensor(
+                        shape=(1024, 1024), dtype=tf.uint8
+                    ),
                 }
             ),
             # If there's a common (input, target) tuple from the
@@ -38,8 +42,8 @@ class Builder(tfds.core.GeneratorBasedBuilder):
 
     def _split_generators(self, dl_manager: tfds.download.DownloadManager):
         """Returns SplitGenerators."""
-        dl_manager.manual_dir = Path("../../.data/2018.04")
-        path = dl_manager.manual_dir
+        dl_manager.manual_dir
+        path = dl_manager.manual_dir / "sentinel_water"
 
         return {
             "train": self._generate_examples(
