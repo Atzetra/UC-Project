@@ -27,10 +27,10 @@ class Builder(tfds.core.GeneratorBasedBuilder):
                 {
                     # These are the features of your dataset like images, labels ...
                     "image": tfds.features.Tensor(
-                        shape=(1024, 1024, 4), dtype=tf.uint16
+                        shape=(256, 256, 4), dtype=tf.float32
                     ),
                     "mask": tfds.features.Tensor(
-                        shape=(1024, 1024), dtype=tf.uint8
+                        shape=(256, 256, 1), dtype=tf.float32
                     ),
                 }
             ),
@@ -54,11 +54,11 @@ class Builder(tfds.core.GeneratorBasedBuilder):
     def _generate_examples(self, image_path: Path, mask_path: Path):
         """Yields examples."""
         # TODO(sentinel_water): Yields (key, example) tuples from the dataset
-        for root, _, files in tf.io.gfile.walk(image_path):
-            for file_path in files:
+        for _, _, files in tf.io.gfile.walk(image_path):
+            for file in files:
                 # Select only tif files.
-                if file_path.endswith(".tif"):
-                    yield file_path, {
-                        "image": tiff.imread(Path(image_path) / file_path),
-                        "mask": tiff.imread(Path(mask_path) / file_path),
+                if file.endswith(".tif"):
+                    yield file, {
+                        "image": tiff.imread(Path(image_path) / file),
+                        "mask": tiff.imread(Path(mask_path) / file),
                     }
