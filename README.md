@@ -2,6 +2,8 @@
   <img width="500" alt="logo" src="https://autokeras.com/img/row_red.svg"/>
 </p>
 
+# Explination of project at end of README!
+
 [![](https://github.com/keras-team/autokeras/workflows/Tests/badge.svg?branch=master)](https://github.com/keras-team/autokeras/actions?query=workflow%3ATests+branch%3Amaster)
 [![codecov](https://codecov.io/gh/keras-team/autokeras/branch/master/graph/badge.svg)](https://codecov.io/gh/keras-team/autokeras)
 [![PyPI version](https://badge.fury.io/py/autokeras.svg)](https://badge.fury.io/py/autokeras)
@@ -92,3 +94,21 @@ Biblatex entry:
 ## Acknowledgements
 
 The authors gratefully acknowledge the D3M program of the Defense Advanced Research Projects Agency (DARPA) administered through AFRL contract FA8750-17-2-0116; the Texas A&M College of Engineering, and Texas A&M University.
+
+---
+
+# Installation
+To install the dependencies, run
+```shell
+conda create --file autokeras.yml
+pip install -e .
+```
+
+## Structure
+All the files needed for dataset generation of the water dataset are located in `./helpers/datagen.py`. This file assumes that you have the Sentinel 2 dataset downloaded and preprocessed.
+
+Use the `./datasets/dataset_processing.ipynb` notebook for this. Here we detailed how to download and generate the files needed.
+
+To run the sementation, run `./segmentation.ipynb`. I currently am stuck at a shape mismatch error at [this line](https://github.com/Atzetra/UC-Project/blob/74abc875bb08f50225a5d9f8e6ee9267fe96cfc6/autokeras/analysers/output_analysers.py#L133). I don't know if you can manage to get it working.
+
+Running `./segmentation.py` will also run the dataloader and the goal is to make this file run the entire pipeline.

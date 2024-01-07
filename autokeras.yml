@@ -258,7 +258,6 @@ dependencies:
       - appdirs==1.4.4
       - array-record==0.5.0
       - astunparse==1.6.3
-      - autokeras==1.1.1.dev0
       - cachetools==5.3.2
       - charset-normalizer==3.3.2
       - cityscapesscripts==2.2.2
