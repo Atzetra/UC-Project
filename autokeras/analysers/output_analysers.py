@@ -99,6 +99,77 @@ class ClassificationAnalyser(TargetAnalyser):
         return len(self.shape) > 1 and self.shape[1] > 1
 
 
+class SegmentationAnalyser(ClassificationAnalyser):
+    def __init__(self, num_classes=None, multi_label=False, **kwargs):
+        super().__init__(**kwargs)
+        self.num_classes = num_classes
+        self.label_encoder = None
+        self.multi_label = multi_label
+        self.labels = set()
+
+    def finalize(self):
+        # TODO: support raw string labels for multi-label.
+        self.labels = sorted(list(self.labels))
+
+        # Infer the num_classes if not specified.
+        if not self.num_classes:
+            if self.encoded:
+                self.num_classes = self.shape[-1]
+            else:
+                self.num_classes = len(self.labels)
+
+        if self.num_classes < 2:
+            raise ValueError(
+                "Expect the target data for {name} to have "
+                "at least 2 classes, but got {num_classes}.".format(
+                    name=self.name, num_classes=self.num_classes
+                )
+            )
+
+        # Check shape equals expected shape.
+        expected = self.get_expected_shape()
+        actual = self.shape[-1]
+        # if len(actual) == 0:
+        #     actual = [1]
+        if self.encoded and actual != expected:
+            raise ValueError(
+                "Expect the target data for {name} to have "
+                "shape {expected}, but got {actual}.".format(
+                    name=self.name, expected=expected, actual=self.shape[1:]
+                )
+            )
+
+    def update(self, data):
+        """Update the statistics with a batch of data.
+
+        # Arguments
+            data: tf.Tensor. One batch of data from tf.data.Dataset.
+        """
+        if self.dtype is None:
+            self.dtype = data.dtype
+        if self.shape is None:
+            self.shape = data.shape.as_list()
+        if self.batch_size is None:
+            self.batch_size = data.shape.as_list()[0]
+        self.num_samples += data.shape.as_list()[0]
+
+        if len(self.shape) > 4:
+            raise ValueError(
+                "Expect the target data for {name} to have shape "
+                "(batch_size, width, height, num_classes), "
+                "but got {shape}.".format(name=self.name, shape=self.shape)
+            )
+        if len(self.shape) > 1 and self.shape[-1] > 1:
+            return
+        self.labels = self.labels.union(set(np.unique(data.numpy())))
+
+    def get_expected_shape(self):
+        # Compute expected shape from num_classes.
+        if self.num_classes == 2 and not self.multi_label:
+            return [1]
+        return [self.num_classes]
+
+
 class RegressionAnalyser(TargetAnalyser):
     def __init__(self, output_dim=None, **kwargs):
         super().__init__(**kwargs)

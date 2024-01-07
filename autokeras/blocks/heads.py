@@ -316,3 +316,10 @@ class SegmentationHead(ClassificationHead):
 
     def get_adapter(self):
         return adapters.SegmentationHeadAdapter(name=self.name)
+
+    def get_analyser(self):
+        return analysers.SegmentationAnalyser(
+            num_classes=self.num_classes,
+            name=self.name,
+            multi_label=self.multi_label,
+        )
