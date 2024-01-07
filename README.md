@@ -104,6 +104,8 @@ conda create --file autokeras.yml
 pip install -e .
 ```
 
+This is done in a WSL/Ubuntu environment.
+
 ## Structure
 All the files needed for dataset generation of the water dataset are located in `./helpers/datagen.py`. This file assumes that you have the Sentinel 2 dataset downloaded and preprocessed.
 
