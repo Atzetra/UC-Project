@@ -128,9 +128,9 @@ class SegmentationAnalyser(ClassificationAnalyser):
 
         # Check shape equals expected shape.
         expected = self.get_expected_shape()
-        actual = self.shape[-1]
-        # if len(actual) == 0:
-        #     actual = [1]
+        actual = self.shape[1:]
+        if len(actual) == 0:
+            actual = [1]
         if self.encoded and actual != expected:
             raise ValueError(
                 "Expect the target data for {name} to have "
@@ -166,8 +166,8 @@ class SegmentationAnalyser(ClassificationAnalyser):
     def get_expected_shape(self):
         # Compute expected shape from num_classes.
         if self.num_classes == 2 and not self.multi_label:
-            return [1]
-        return [self.num_classes]
+            return self.shape[1:3] + [1]
+        return self.shape[1:3] + [self.num_classes]
 
 
 class RegressionAnalyser(TargetAnalyser):
