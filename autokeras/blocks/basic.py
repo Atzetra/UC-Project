@@ -17,11 +17,11 @@ from typing import Union
 
 import keras_nlp
 import tensorflow as tf
+from keras import applications
+from keras import layers
 from keras_tuner.engine import hyperparameters
 from tensorflow import keras
 from tensorflow import nest
-from tensorflow.keras import applications
-from tensorflow.keras import layers
 
 from autokeras.blocks import reduction
 from autokeras.engine import block as block_module

@@ -14,6 +14,7 @@
 
 import keras_nlp
 
+from autokeras.architectures import deeplab_v3
 from autokeras.auto_model import AutoModel
 from autokeras.blocks import BertBlock
 from autokeras.blocks import CategoricalToNumerical

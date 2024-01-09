@@ -22,7 +22,7 @@ from keras.models import Model
 from keras.utils import get_source_inputs
 from tensorflow import nest
 
-import architectures.deeplab_v3 as xception
+import autokeras.architectures.deeplab_v3 as xception
 from autokeras.blocks import basic
 from autokeras.blocks import preprocessing
 from autokeras.blocks import reduction
@@ -184,15 +184,20 @@ class SegmentationBlock(block_module.Block):
         if inputs is None:
             img_input = layers.Input(inputs.shape.as_list()[:3])
         else:
-            if not K.is_keras_tensor(inputs):
+            try:
+                if not K.is_keras_tensor(inputs[0]):
+                    img_input = layers.Input(
+                        tensor=inputs, shape=inputs[0].shape.as_list()[:3]
+                    )
+            except ValueError:
                 img_input = layers.Input(
-                    tensor=inputs, shape=inputs.shape.as_list()[:3]
+                    tensor=inputs, shape=inputs[0].shape.as_list()[:3]
                 )
             else:
-                img_input = inputs
+                img_input = inputs[0]
 
         batches_input = layers.Lambda(lambda x: x / 127.5 - 1)(img_input)
-        input_shape = inputs.shape.as_list()[:3]
+        input_shape = inputs[0].shape.as_list()[:3]
         if block_type == "xception":
             if self.os == 8:
                 entry_block3_stride = 1
@@ -203,7 +208,7 @@ class SegmentationBlock(block_module.Block):
                 middle_block_rate = 1
                 exit_block_rates = (1, 2)
             x = basic.ConvBlock(
-                32,
+                filters=32,
                 kernel_size=3,
                 padding="same",
                 use_bias=False,
@@ -284,7 +289,7 @@ class SegmentationBlock(block_module.Block):
             if first_block_filters < 0.9 * 32 * self.alpha:
                 first_block_filters += 8
             x = basic.ConvBlock(
-                first_block_filters,
+                filters=first_block_filters,
                 kernel_size=3,
                 padding="same",
                 use_bias=False,
@@ -481,7 +486,7 @@ class SegmentationBlock(block_module.Block):
             )
         )(x)
         x = basic.ConvBlock(
-            256,
+            filters=256,
             kernel_size=1,
             padding="same",
             use_bias=False,
@@ -504,7 +509,11 @@ class SegmentationBlock(block_module.Block):
 
         # simple 1x1
         b0 = basic.ConvBlock(
-            256, kernel_size=1, padding="same", use_bias=False, name="aspp0"
+            filters=256,
+            kernel_size=1,
+            padding="same",
+            use_bias=False,
+            name="aspp0",
         ).build(hp, inputs=x)
         b0 = layers.BatchNormalization(name="aspp0_BN", epsilon=1e-5)(b0)
         b0 = layers.Activation("relu", name="aspp0_activation")(b0)
@@ -524,7 +533,7 @@ class SegmentationBlock(block_module.Block):
             x = layers.Concatenate()([b4, b0])
 
         x = basic.ConvBlock(
-            256,
+            filters=256,
             kernel_size=1,
             padding="same",
             use_bias=False,
@@ -553,7 +562,7 @@ class SegmentationBlock(block_module.Block):
             )(x)
 
             dec_skip1 = basic.ConvBlock(
-                48,
+                filtars=48,
                 kernel_size=1,
                 padding="same",
                 use_bias=False,
@@ -574,7 +583,10 @@ class SegmentationBlock(block_module.Block):
             last_layer_name = "custom_logits_semantic"
 
         x = basic.ConvBlock(
-            self.classes, kernel_size=1, padding="same", name=last_layer_name
+            filters=self.classes,
+            kernel_size=1,
+            padding="same",
+            name=last_layer_name,
         ).build(hp, inputs=x)
         x = layers.Lambda(
             lambda x: K.tf.image.resize_bilinear(
