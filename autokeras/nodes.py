@@ -109,6 +109,38 @@ class ImageInput(Input):
         return blocks.ImageBlock()
 
 
+class ImageInput(Input):
+    """Input node for image data.
+
+    The input data should be numpy.ndarray or tf.data.Dataset. The shape of the
+    data should be should be (samples, width, height) or (samples, width,
+    height, channels).
+
+    # Arguments
+        name: String. The name of the input node. If unspecified, it will be set
+            automatically with the class name.
+    """
+
+    def __init__(self, name: Optional[str] = None, **kwargs):
+        super().__init__(name=name, **kwargs)
+
+    def build(self, hp, inputs=None):
+        inputs = super().build(hp, inputs)
+        output_node = nest.flatten(inputs)[0]
+        if len(output_node.shape) == 3:
+            output_node = keras_layers.ExpandLastDim()(output_node)
+        return output_node
+
+    def get_adapter(self):
+        return adapters.ImageAdapter()
+
+    def get_analyser(self):
+        return analysers.ImageAnalyser()
+
+    def get_block(self):
+        return blocks.SegmentationBlock()
+
+
 class TextInput(Input):
     """Input node for text data.
 

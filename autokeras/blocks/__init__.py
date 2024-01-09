@@ -38,6 +38,7 @@ from autokeras.blocks.reduction import SpatialReduction
 from autokeras.blocks.reduction import TemporalReduction
 from autokeras.blocks.wrapper import GeneralBlock
 from autokeras.blocks.wrapper import ImageBlock
+from autokeras.blocks.wrapper import SegmentationBlock
 from autokeras.blocks.wrapper import StructuredDataBlock
 from autokeras.blocks.wrapper import TextBlock
 from autokeras.blocks.wrapper import TimeseriesBlock

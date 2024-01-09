@@ -30,6 +30,8 @@ from autokeras.blocks import Normalization
 from autokeras.blocks import RegressionHead
 from autokeras.blocks import ResNetBlock
 from autokeras.blocks import RNNBlock
+from autokeras.blocks import SegmentationBlock
+from autokeras.blocks import SegmentationHead
 from autokeras.blocks import SpatialReduction
 from autokeras.blocks import StructuredDataBlock
 from autokeras.blocks import TemporalReduction
