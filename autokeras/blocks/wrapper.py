@@ -150,7 +150,7 @@ class SegmentationBlock(block_module.Block):
         else:
             return outputs
 
-    def bulid(self, hp, inputs=None):
+    def build(self, hp, inputs=None):
         """
         # Arguments
             input_tensor: optional Keras tensor (i.e. output of `layers.Input()`)
