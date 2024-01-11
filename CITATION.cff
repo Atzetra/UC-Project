@@ -1,0 +1,11 @@
+---
+authors:
+  - family-names: Sastrokarijo
+    given-names: Enzo
+    orcid: https://orcid.org/0009-0006-2345-5958
+cff-version: 1.2.0
+date-released: 2017-12-18T00:00:00.000Z
+message: If you use this software, please cite it as below.
+title: AutoKeras with Image Segmentation
+url: https://github.com/Atzetra/UC-Project
+version: 0.9.0
